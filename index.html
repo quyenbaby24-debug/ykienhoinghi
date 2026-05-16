@@ -1,0 +1,937 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no, viewport-fit=cover">
+    <title>Đăng ký Ý kiến Hội nghị</title>
+    <meta name="theme-color" content="#a8edea">
+    <meta name="apple-mobile-web-app-title" content="Ý KIẾN HỘI NGHỊ">
+    <link rel="manifest" href="manifest.json">
+    <script src="pwa-core.js"></script>
+    <!-- Tệp cấu hình — chỉnh link và mật khẩu tại đây -->
+    <script src="config.js"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root {
+            --primary: #1565C0;
+            --primary-light: #1E88E5;
+            --primary-dark: #0D47A1;
+            --accent: #FF6F00;
+            --surface: #FFFFFF;
+            --surface2: #F0F4FF;
+            --bg: #E8EEF9;
+            --text: #0D1B2A;
+            --text2: #4A6080;
+            --border: #C5D3E8;
+            --success: #1B7A4E;
+            --danger: #C62828;
+            --radius-xl: 24px;
+            --radius-lg: 16px;
+            --radius-md: 12px;
+            --shadow-sm: 0 2px 8px rgba(13,71,161,0.08);
+            --shadow-md: 0 6px 20px rgba(13,71,161,0.12);
+            --shadow-lg: 0 12px 32px rgba(13,71,161,0.18);
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+
+        body {
+            font-family: 'Be Vietnam Pro', sans-serif;
+            background: var(--bg);
+            min-height: 100vh;
+            min-height: -webkit-fill-available;
+            padding: 0 0 72px 0;
+            color: var(--text);
+        }
+
+        /* ===== HEADER ===== */
+        .app-header {
+            background: linear-gradient(150deg, var(--primary-dark) 0%, var(--primary) 60%, var(--primary-light) 100%);
+            padding: 12px 16px 10px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .app-header::before {
+            content: '';
+            position: absolute;
+            top: -40px; right: -40px;
+            width: 180px; height: 180px;
+            border-radius: 50%;
+            background: rgba(255,255,255,0.07);
+        }
+
+        .app-header::after {
+            content: '';
+            position: absolute;
+            bottom: -20px; left: 30px;
+            width: 100px; height: 100px;
+            border-radius: 50%;
+            background: rgba(255,255,255,0.05);
+        }        
+
+        .app-header h1 {
+            font-size: 1.55rem;
+            text-align: center;
+            font-weight: 800;
+            color: white;
+            letter-spacing: -0.3px;
+            margin-bottom: 4px;
+        }
+
+        .app-header p {
+            color: rgba(255,255,255,0.75);
+            font-size: 0.82rem;
+            font-weight: 500;
+        }
+
+        /* ===== CONTENT ===== */
+        .content { padding: 20px 16px; }
+
+        /* ===== CARD ===== */
+        .card {
+            background: var(--surface);
+            border-radius: var(--radius-xl);
+            padding: 20px;
+            box-shadow: var(--shadow-md);
+            display: none;
+        }
+
+        .card.active {
+            display: block;
+            animation: slideUp 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+        }
+
+        @keyframes slideUp {
+            from { opacity: 0; transform: translateY(16px); }
+            to   { opacity: 1; transform: translateY(0); }
+        }
+
+        /* ===== FORM ===== */
+        .form-section {
+            margin-bottom: 18px;
+        }
+
+        .field-label {
+            font-size: 0.75rem;
+            font-weight: 700;
+            color: var(--primary-dark);
+            text-transform: uppercase;
+            letter-spacing: 0.6px;
+            margin-bottom: 8px;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .field-label i { color: var(--primary-light); font-size: 0.85rem; }
+        .required { color: var(--accent); margin-left: 2px; }
+
+        .field-input {
+            width: 100%;
+            padding: 13px 16px;
+            border: 1.5px solid var(--border);
+            border-radius: var(--radius-lg);
+            font-size: 0.95rem;
+            font-family: inherit;
+            color: var(--text);
+            background: var(--surface);
+            transition: all 0.2s;
+            -webkit-appearance: none;
+        }
+
+        .field-input:focus {
+            outline: none;
+            border-color: var(--primary-light);
+            box-shadow: 0 0 0 3px rgba(30,136,229,0.15);
+        }
+
+        /* ===== BULLET EDITOR ===== */
+        .editor-hint {
+            font-size: 0.72rem;
+            color: var(--text2);
+            margin-bottom: 8px;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+
+        .bullet-editor {
+            min-height: 120px;
+            border: 1.5px solid var(--border);
+            border-radius: var(--radius-lg);
+            padding: 12px 14px;
+            cursor: text;
+            font-family: inherit;
+            font-size: 0.9rem;
+            background: var(--surface);
+            transition: all 0.2s;
+        }
+
+        .bullet-editor:focus-within {
+            border-color: var(--primary-light);
+            box-shadow: 0 0 0 3px rgba(30,136,229,0.12);
+        }
+
+        .bullet-line {
+            display: flex;
+            align-items: flex-start;
+            gap: 8px;
+            padding: 3px 0;
+        }
+
+        .bullet-dot {
+            color: var(--primary-light);
+            font-size: 1rem;
+            line-height: 1.6;
+            user-select: none;
+            flex-shrink: 0;
+        }
+
+        .bullet-text {
+            flex: 1;
+            min-height: 1.6em;
+            outline: none;
+            line-height: 1.6;
+            word-break: break-word;
+            color: var(--text);
+        }
+
+        /* ===== DROPDOWN ===== */
+        .search-select { position: relative; }
+
+        .dropdown-list {
+            position: absolute;
+            top: calc(100% + 6px);
+            left: 0; right: 0;
+            max-height: 200px;
+            overflow-y: auto;
+            background: white;
+            border: 1.5px solid var(--border);
+            border-radius: var(--radius-lg);
+            box-shadow: var(--shadow-lg);
+            z-index: 100;
+            display: none;
+        }
+
+        .dropdown-list.show { display: block; }
+
+        .dropdown-item {
+            padding: 11px 16px;
+            cursor: pointer;
+            font-size: 0.88rem;
+            color: var(--text);
+            border-bottom: 1px solid #F0F4F8;
+            transition: background 0.15s;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .dropdown-item:last-child { border-bottom: none; }
+        .dropdown-item:hover { background: var(--surface2); }
+        .dropdown-item::before { content: '•'; color: var(--primary-light); font-size: 0.7rem; }
+
+        /* ===== SUBMIT BUTTON ===== */
+        .btn-submit {
+            width: 100%;
+            padding: 15px;
+            background: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%);
+            color: white;
+            border: none;
+            border-radius: var(--radius-lg);
+            font-size: 0.95rem;
+            font-weight: 700;
+            font-family: inherit;
+            cursor: pointer;
+            letter-spacing: 0.3px;
+            transition: all 0.25s;
+            box-shadow: 0 4px 14px rgba(13,71,161,0.35);
+            margin-top: 4px;
+        }
+
+        .btn-submit:active { transform: scale(0.98); }
+        .btn-submit:disabled { opacity: 0.55; cursor: not-allowed; transform: none; box-shadow: none; }
+
+        /* ===== RESULT TAB ===== */
+        .result-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 16px;
+        }
+
+        .result-title {
+            font-size: 1rem;
+            font-weight: 800;
+            color: var(--primary-dark);
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .result-title i { color: var(--primary-light); }
+
+        .btn-refresh {
+            background: var(--surface2);
+            border: 1.5px solid var(--border);
+            padding: 7px 14px;
+            border-radius: 30px;
+            cursor: pointer;
+            font-size: 0.75rem;
+            font-weight: 600;
+            font-family: inherit;
+            color: var(--primary);
+            transition: all 0.2s;
+        }
+
+        .btn-refresh:active { background: var(--border); }
+
+        .result-list { max-height: 55vh; overflow-y: auto; }
+
+        .result-item {
+            background: var(--surface2);
+            border-left: 1.5px solid var(--primary-light);
+            padding: 14px 16px;
+            margin-bottom: 10px;
+            border-radius: var(--radius-md);
+        }
+
+        .result-item.chu-toa {
+            border-left-color: var(--accent);
+            background: #FFF8F0;
+        }
+
+        .item-order {
+            font-size: 0.72rem;
+            font-weight: 700;
+            color: var(--primary);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            margin-bottom: 6px;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .result-item.chu-toa .item-order { color: var(--accent); }
+
+        .item-name {
+            font-weight: 700;
+            color: var(--text);
+            font-size: 0.92rem;
+            margin-bottom: 2px;
+        }
+
+        .item-kdc {
+            font-size: 0.77rem;
+            color: var(--text2);
+            margin-bottom: 8px;
+        }
+
+        .item-nd {
+            color: var(--text2);
+            font-size: 0.84rem;
+            line-height: 1.55;
+        }
+
+        .badge-ct {
+            display: inline-flex;
+            align-items: center;
+            gap: 4px;
+            background: var(--accent);
+            color: white;
+            padding: 2px 10px;
+            border-radius: 20px;
+            font-size: 0.68rem;
+            font-weight: 700;
+        }
+
+        .ct-note {
+            margin-top: 8px;
+            padding: 7px 10px;
+            background: rgba(255,111,0,0.08);
+            border-radius: 8px;
+            font-size: 0.78rem;
+            color: var(--accent);
+            font-weight: 500;
+        }
+
+        .ct-note i { margin-right: 5px; }
+
+        .section-divider {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin: 16px 0 10px;
+            color: var(--text2);
+            font-size: 0.73rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .section-divider::before,
+        .section-divider::after {
+            content: '';
+            flex: 1;
+            height: 1px;
+            background: var(--border);
+        }
+
+        /* ===== BOTTOM NAV ===== */
+        .bottom-nav {
+            position: fixed;
+            bottom: 0; left: 0; right: 0;
+            background: rgba(255,255,255,0.97);
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+            display: flex;
+            justify-content: space-around;
+            align-items: center;
+            padding: 8px 8px 20px;
+            border-top: 1px solid rgba(197,211,232,0.5);
+            box-shadow: 0 -4px 20px rgba(13,71,161,0.08);
+            z-index: 200;
+        }
+
+        .nav-item {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 3px;
+            cursor: pointer;
+            padding: 8px 20px;
+            border-radius: 14px;
+            color: var(--text2);
+            flex: 1;
+            transition: all 0.2s;
+        }
+
+        .nav-item i { font-size: 1.3rem; }
+        .nav-item span { font-size: 0.65rem; font-weight: 600; }
+
+        .nav-item.active {
+            color: var(--primary);
+            background: rgba(21,101,192,0.1);
+        }
+
+        /* ===== TOAST ===== */
+        .toast {
+            position: fixed;
+            bottom: 82px;
+            left: 50%;
+            transform: translateX(-50%) translateY(10px);
+            background: var(--text);
+            color: white;
+            padding: 11px 22px;
+            border-radius: 40px;
+            opacity: 0;
+            transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+            z-index: 300;
+            font-size: 0.82rem;
+            font-weight: 600;
+            white-space: nowrap;
+            pointer-events: none;
+            max-width: calc(100vw - 32px);
+        }
+
+        .toast.show {
+            opacity: 1;
+            transform: translateX(-50%) translateY(0);
+        }
+
+        .loading {
+            text-align: center;
+            padding: 36px 20px;
+            color: var(--text2);
+            font-size: 0.88rem;
+        }
+
+        .loading i { font-size: 1.4rem; color: var(--border); display: block; margin-bottom: 10px; }
+
+        @media (max-width: 380px) {
+            .app-header { padding: 48px 16px 24px; }
+            .app-header h1 { font-size: 1.3rem; }
+            .nav-item { padding: 8px 12px; }
+        }
+
+        /* ===== FORM LOCKED OVERLAY ===== */
+        .form-locked-overlay {
+            display: none;
+            position: absolute;
+            inset: 0;
+            border-radius: var(--radius-xl);
+            background: rgba(240,244,255,0.88);
+            backdrop-filter: blur(3px);
+            -webkit-backdrop-filter: blur(3px);
+            z-index: 10;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            gap: 14px;
+            padding: 28px 24px;
+            text-align: center;
+            cursor: default;
+        }
+
+        .form-locked-overlay.show {
+            display: flex;
+        }
+
+        .lock-icon {
+            width: 64px;
+            height: 64px;
+            background: linear-gradient(135deg, var(--primary-dark), var(--primary));
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 6px 20px rgba(13,71,161,0.3);
+        }
+
+        .lock-icon i {
+            font-size: 1.7rem;
+            color: white;
+        }
+
+        .lock-title {
+            font-size: 1.05rem;
+            font-weight: 800;
+            color: var(--primary-dark);
+        }
+
+        .lock-desc {
+            font-size: 0.84rem;
+            color: var(--text2);
+            line-height: 1.55;
+            max-width: 260px;
+        }
+
+        /* Khi form bị khoá: làm mờ nội dung phía sau */
+        #tabDangKy.form-disabled .form-section,
+        #tabDangKy.form-disabled .btn-submit {
+            pointer-events: none;
+            user-select: none;
+            opacity: 0.35;
+            filter: blur(1.5px);
+        }
+    </style>
+</head>
+<body>
+
+<!-- App Header -->
+<div class="app-header">
+    <h1>Đăng ký Ý kiến</h1>
+</div>
+
+<div class="content">
+
+    <!-- Tab: Đăng ký -->
+    <div class="card active" id="tabDangKy" style="position:relative;">
+
+        <!-- Overlay khi form bị khoá -->
+        <div class="form-locked-overlay" id="formLockedOverlay">
+            <div class="lock-icon">
+                <i class="fas fa-lock"></i>
+            </div>
+            <div class="lock-title">Form đang tạm khoá</div>
+            <div class="lock-desc">Chủ toạ chưa mở form đăng ký. Vui lòng chờ trong giây lát và thử lại.</div>
+        </div>
+
+        <div class="form-section">
+            <div class="field-label">
+                <i class="fas fa-user"></i> Họ và tên <span class="required">*</span>
+            </div>
+            <input type="text" class="field-input" id="hoTen" placeholder="Nhập họ tên đầy đủ" autocomplete="off">
+        </div>
+
+        <div class="form-section">
+            <div class="field-label">
+                <i class="fas fa-map-marker-alt"></i> Khu dân cư <span class="required">*</span>
+            </div>
+            <div class="search-select">
+                <input type="text" class="field-input" id="searchKhuDanCu" placeholder="Tìm kiếm khu dân cư..." autocomplete="off">
+                <div id="dropdownList" class="dropdown-list"></div>
+                <input type="hidden" id="selectedKhuDanCu">
+            </div>
+        </div>
+
+        <div class="form-section">
+            <div class="field-label">
+                <i class="fas fa-comment-dots"></i> Nội dung ý kiến <span class="required">*</span>
+            </div>
+            <div class="editor-hint">
+                <i class="fas fa-keyboard"></i> Nhấn <strong>Enter</strong> để thêm ý kiến mới
+            </div>
+            <div class="bullet-editor" id="bulletEditor"></div>
+        </div>
+
+        <button id="btnGui" class="btn-submit">
+            <i class="fas fa-paper-plane"></i>&ensp;Gửi đăng ký
+        </button>
+    </div>
+
+    <!-- Tab: Đã duyệt -->
+    <div class="card" id="tabDaDuyet">
+        <div class="result-header">
+            <div class="result-title">
+                <i class="fas fa-list-ol"></i> Danh sách phát biểu
+            </div>
+            <button id="refreshResult" class="btn-refresh">
+                <i class="fas fa-sync-alt"></i> Làm mới
+            </button>
+        </div>
+        <div id="ketQuaDuyet" class="result-list">
+            <div class="loading"><i class="fas fa-spinner fa-spin"></i>Đang tải dữ liệu...</div>
+        </div>
+    </div>
+
+</div>
+
+<!-- Bottom Navigation -->
+<div class="bottom-nav">
+    <div class="nav-item active" data-tab="dangky">
+        <i class="fas fa-edit"></i>
+        <span>Đăng ký</span>
+    </div>
+    <div class="nav-item" data-tab="daduyet">
+        <i class="fas fa-check-circle"></i>
+        <span>Đã duyệt</span>
+    </div>
+    <div class="nav-item" data-tab="admin">
+        <i class="fas fa-shield-alt"></i>
+        <span>Admin</span>
+    </div>
+</div>
+
+<div id="toast" class="toast"></div>
+
+<script src="khudancu.js"></script>
+<script>
+// ===================== CẤU HÌNH (đọc từ config.js) =====================
+const WEBAPP_URL = (typeof APP_CONFIG !== 'undefined') ? APP_CONFIG.WEBAPP_URL : '';
+
+// ===================== TOAST =====================
+function showToast(msg, isErr = false) {
+    const t = document.getElementById('toast');
+    t.textContent = msg;
+    t.style.background = isErr ? '#C62828' : '#0D47A1';
+    t.classList.add('show');
+    setTimeout(() => t.classList.remove('show'), 2800);
+}
+
+// ===================== BULLET EDITOR =====================
+const editor = document.getElementById('bulletEditor');
+
+function taoLine(text = '') {
+    const line = document.createElement('div');
+    line.className = 'bullet-line';
+    const dot = document.createElement('span');
+    dot.className = 'bullet-dot';
+    dot.textContent = '•';
+    dot.contentEditable = 'false';
+    const txt = document.createElement('span');
+    txt.className = 'bullet-text';
+    txt.contentEditable = 'true';
+    txt.textContent = text;
+    line.appendChild(dot);
+    line.appendChild(txt);
+    return { line, txt };
+}
+
+function initEditor() {
+    editor.innerHTML = '';
+    const { line, txt } = taoLine();
+    editor.appendChild(line);
+    editor.addEventListener('click', () => {
+        const all = editor.querySelectorAll('.bullet-text');
+        if (all.length) all[all.length - 1].focus();
+    });
+    editor.addEventListener('keydown', e => {
+        const active = document.activeElement;
+        if (!active || !active.classList.contains('bullet-text')) return;
+        if (e.key === 'Enter') {
+            e.preventDefault();
+            const curLine = active.closest('.bullet-line');
+            const { line: newLine, txt: newTxt } = taoLine();
+            if (curLine.nextSibling) editor.insertBefore(newLine, curLine.nextSibling);
+            else editor.appendChild(newLine);
+            newTxt.focus();
+        }
+        if (e.key === 'Backspace' && active.textContent === '') {
+            const lines = editor.querySelectorAll('.bullet-line');
+            if (lines.length > 1) {
+                e.preventDefault();
+                const curLine = active.closest('.bullet-line');
+                const prev = curLine.previousSibling;
+                curLine.remove();
+                if (prev) prev.querySelector('.bullet-text')?.focus();
+            }
+        }
+    });
+    txt.focus();
+}
+initEditor();
+
+function getBulletLines() {
+    return [...editor.querySelectorAll('.bullet-text')]
+        .map(s => s.textContent.trim()).filter(Boolean);
+}
+
+function resetEditor() {
+    editor.innerHTML = '';
+    const { line } = taoLine();
+    editor.appendChild(line);
+}
+
+// ===================== KHU DÂN CƯ =====================
+(function initKDC() {
+    const ds = typeof DS_KDC_GS !== 'undefined' ? DS_KDC_GS : [];
+    const inp = document.getElementById('searchKhuDanCu');
+    const drop = document.getElementById('dropdownList');
+    const hid  = document.getElementById('selectedKhuDanCu');
+
+    function render(kw = '') {
+        const f = ds.filter(x => x.toLowerCase().includes(kw.toLowerCase()));
+        drop.innerHTML = f.length
+            ? f.map(x => `<div class="dropdown-item" data-v="${x}">${x}</div>`).join('')
+            : '<div class="dropdown-item" style="color:#aaa;cursor:default">Không tìm thấy</div>';
+        drop.classList.add('show');
+        drop.querySelectorAll('.dropdown-item[data-v]').forEach(el => {
+            el.addEventListener('click', () => {
+                inp.value = el.dataset.v;
+                hid.value = el.dataset.v;
+                drop.classList.remove('show');
+            });
+        });
+    }
+
+    inp.addEventListener('input', e => render(e.target.value));
+    inp.addEventListener('focus', () => render(inp.value));
+    document.addEventListener('click', e => {
+        if (!inp.contains(e.target) && !drop.contains(e.target))
+            drop.classList.remove('show');
+    });
+})();
+
+// ===================== API =====================
+async function guiDangKy(payload) {
+    const res = await fetch(WEBAPP_URL, {
+        method: 'POST',
+        headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+        body: JSON.stringify(payload)
+    });
+    const text = await res.text();
+    try {
+        return JSON.parse(text);
+    } catch(e) {
+        console.error('Response khong phai JSON:', text);
+        throw new Error('May chu tra ve du lieu khong hop le. Kiem tra lai URL webapp.');
+    }
+}
+
+// ===================== TRẠNG THÁI FORM =====================
+async function checkFormStatus() {
+    try {
+        const res = await fetch(WEBAPP_URL + '?action=get&t=' + Date.now());
+        const json = await res.json();
+        let enabled = true;
+        if (json && typeof json === 'object' && !Array.isArray(json) && json.config) {
+            enabled = json.config.formEnabled !== false;
+        }
+        setFormLocked(!enabled);
+    } catch (err) {
+        console.warn('Không kiểm tra được trạng thái form:', err);
+    }
+}
+
+function setFormLocked(locked) {
+    const tab = document.getElementById('tabDangKy');
+    const overlay = document.getElementById('formLockedOverlay');
+    if (locked) {
+        tab.classList.add('form-disabled');
+        overlay.classList.add('show');
+    } else {
+        tab.classList.remove('form-disabled');
+        overlay.classList.remove('show');
+    }
+}
+
+// Hàm lấy dữ liệu từ API - xử lý cả 2 cấu trúc (mảng hoặc object có data)
+async function fetchData() {
+    const res = await fetch(WEBAPP_URL + '?action=get&t=' + Date.now());
+    const json = await res.json();
+    
+    // Xử lý cấu trúc dữ liệu mới { data: [], config: {} } hoặc mảng cũ []
+    if (json && typeof json === 'object') {
+        if (Array.isArray(json)) {
+            return json; // Cấu trúc cũ
+        } else if (json.data && Array.isArray(json.data)) {
+            return json.data; // Cấu trúc mới
+        }
+    }
+    return [];
+}
+
+// ===================== GỬI ĐĂNG KÝ =====================
+document.getElementById('btnGui').addEventListener('click', async () => {
+    const hoTen    = document.getElementById('hoTen').value.trim();
+    const khuDanCu = document.getElementById('selectedKhuDanCu').value;
+    const lines    = getBulletLines();
+
+    if (!hoTen)        { showToast('⚠ Vui lòng nhập họ tên', true); return; }
+    if (!khuDanCu)     { showToast('⚠ Vui lòng chọn khu dân cư', true); return; }
+    if (!lines.length) { showToast('⚠ Vui lòng nhập nội dung ý kiến', true); return; }
+
+    const noiDung = '• ' + lines.join('\n• ');
+    const btn = document.getElementById('btnGui');
+    btn.disabled = true;
+    btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i>&ensp;Đang gửi...';
+
+    try {
+        const r = await guiDangKy({
+            action: 'add',
+            hoTen, khuDanCu, noiDung,
+            timestamp: new Date().toISOString()
+        });
+        if (r.success) {
+            showToast('✅ Đã gửi đăng ký thành công!');
+            document.getElementById('hoTen').value = '';
+            document.getElementById('searchKhuDanCu').value = '';
+            document.getElementById('selectedKhuDanCu').value = '';
+            resetEditor();
+            await loadKetQua();
+        } else {
+            showToast('Lỗi: ' + (r.error || 'Không xác định'), true);
+        }
+    } catch (err) {
+        showToast('Lỗi kết nối: ' + err.message, true);
+    } finally {
+        btn.disabled = false;
+        btn.innerHTML = '<i class="fas fa-paper-plane"></i>&ensp;Gửi đăng ký';
+    }
+});
+
+// ===================== KẾT QUẢ DUYỆT =====================
+let ketQuaFirstLoad = true;
+
+async function loadKetQua() {
+    const box = document.getElementById('ketQuaDuyet');
+    if (!box) return;
+    
+    if (ketQuaFirstLoad) {
+        box.innerHTML = '<div class="loading"><i class="fas fa-spinner fa-spin"></i>Đang tải dữ liệu...</div>';
+    }
+    
+    try {
+        const data = await fetchData();
+        
+        if (!data || !Array.isArray(data) || data.length === 0) {
+            box.innerHTML = '<div class="loading"><i class="fas fa-clock"></i>Chưa có ý kiến nào được duyệt</div>';
+            ketQuaFirstLoad = false;
+            return;
+        }
+
+        const duyet = data
+            .filter(i => i.status === 'approved' || i.status === 'chu_toa')
+            .sort((a, b) => (parseInt(a.thuTu) || 999) - (parseInt(b.thuTu) || 999));
+
+        if (!duyet.length) {
+            box.innerHTML = '<div class="loading"><i class="fas fa-clock"></i>Chưa có ý kiến nào được duyệt</div>';
+            ketQuaFirstLoad = false;
+            return;
+        }
+
+        // Tách riêng: phát biểu (approved) và tiếp nhận (chu_toa)
+        const duyetPB = duyet.filter(i => i.status === 'approved');
+        const duyetCT = duyet.filter(i => i.status === 'chu_toa');
+
+        let stt = 1;
+        const renderItem = item => {
+            const isCT = item.status === 'chu_toa';
+            const ndSrc = isCT
+                ? (item.noiDung || '')
+                : (item.noiDungDuyet || item.noiDung || '');
+            const ndLines = ndSrc.split('\n').map(l => l.replace(/^•\s*/, '').trim()).filter(Boolean);
+            const ndHtml  = ndLines.map(l => `<div>• ${escapeHtml(l)}</div>`).join('');
+
+            if (isCT) {
+                const ghiChu = (item.noiDungDuyet || '').trim();
+                return `<div class="result-item chu-toa">
+                    <div class="item-order">
+                        <i class="fas fa-check-double"></i> Đã tiếp nhận
+                    </div>
+                    <div class="item-name">${escapeHtml(item.hoTen)}</div>
+                    <div class="item-kdc"><i class="fas fa-map-marker-alt" style="color:var(--accent);margin-right:4px"></i>${escapeHtml(item.khuDanCu)}</div>
+                    <div class="item-nd" style="opacity:0.75">${ndHtml || '<em>(Không có nội dung)</em>'}</div>
+                    ${ghiChu ? `<div class="ct-note"><i class="fas fa-info-circle"></i> ${escapeHtml(ghiChu)}</div>` : ''}
+                </div>`;
+            }
+
+            return `<div class="result-item">
+                <div class="item-order">
+                    <i class="fas fa-hashtag"></i> Phát biểu số ${stt++}
+                </div>
+                <div class="item-name">${escapeHtml(item.hoTen)}</div>
+                <div class="item-kdc"><i class="fas fa-map-marker-alt" style="color:var(--primary-light);margin-right:4px"></i>${escapeHtml(item.khuDanCu)}</div>
+                <div class="item-nd">${ndHtml || '<em style="opacity:0.6">(Mời phát biểu)</em>'}</div>
+            </div>`;
+        };
+
+        let html = duyetPB.map(renderItem).join('');
+        if (duyetCT.length > 0) {
+            if (duyetPB.length > 0) {
+                html += `<div class="section-divider"><span>Ý kiến đã tiếp nhận (${duyetCT.length})</span></div>`;
+            }
+            html += duyetCT.map(renderItem).join('');
+        }
+
+        box.innerHTML = html;
+        ketQuaFirstLoad = false;
+        
+    } catch (err) {
+        console.error('Load ket qua error:', err);
+        if (ketQuaFirstLoad) {
+            box.innerHTML = '<div class="loading" style="color:var(--danger)"><i class="fas fa-exclamation-triangle"></i>Lỗi tải dữ liệu</div>';
+        }
+    }
+}
+
+function escapeHtml(str) {
+    if (!str) return '';
+    return str.replace(/[&<>]/g, m => ({'&':'&amp;','<':'&lt;','>':'&gt;'}[m]||m));
+}
+
+// ===================== BOTTOM NAV =====================
+function switchTab(tabId) {
+    document.querySelectorAll('.card').forEach(c => c.classList.remove('active'));
+    document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
+
+    if (tabId === 'dangky') {
+        document.getElementById('tabDangKy').classList.add('active');
+    } else if (tabId === 'daduyet') {
+        document.getElementById('tabDaDuyet').classList.add('active');
+        loadKetQua();
+    } else if (tabId === 'admin') {
+        window.location.href = 'admin.html';
+        return;
+    }
+
+    document.querySelector(`.nav-item[data-tab="${tabId}"]`)?.classList.add('active');
+}
+
+document.querySelectorAll('.nav-item').forEach(item => {
+    item.addEventListener('click', () => switchTab(item.dataset.tab));
+});
+
+// Tải dữ liệu lần đầu
+checkFormStatus();
+loadKetQua();
+document.getElementById('refreshResult')?.addEventListener('click', loadKetQua);
+setInterval(loadKetQua, 10000);
+setInterval(checkFormStatus, 15000); // Kiểm tra trạng thái form mỗi 15 giây
+</script>
+</body>
+</html>
